@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div></div>
+<script>
+
+
+    var start = new Date();
+    var final = start;
+    var avg = 0, counter = 0;
+    var div = document.body.firstElementChild;
+    var watchid = navigator.geolocation.watchPosition(function (pos) {
+        if (((new Date()) - start) > 60000) {
+            navigator.geolocation.clearWatch(watchid);
+        } else {
+            counter++;
+            var delta = (new Date()) - final;
+            avg += delta / 1000;
+            console.log(delta);
+            console.log(avg);
+            div.innerHTML += '<br/>' + pos.coords.latitude + ', ' + pos.coords.longitude + ', time: ' +
+            (delta / 1000) + ', ' + (avg / counter);
+            final = new Date();
+        }
+    });
+</script>
+</body>
+</html>

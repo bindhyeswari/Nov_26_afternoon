@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #map-canvas {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+<body>
+<div id="map-canvas"></div>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<script>
+
+    var map = new google.maps.Map(document.getElementById('map-canvas'), {
+        zoom: 13,
+        center: new google.maps.LatLng(37.3764892, -122.03061919999999)
+    });
+
+    google.maps.event.addListenerOnce(map, 'idle', function () {
+
+        var markers = [];
+
+
+        var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(37.3764892, -122.03061919999999),
+            map: map,
+            animation: google.maps.Animation.DROP
+        });
+
+
+        var div = document.createElement('div');
+        div.className = 'info_window';
+        div.innerHTML = '121 W Washington Ave.';
+
+        var info = new google.maps.InfoWindow();
+        google.maps.event.addListener(marker, 'click', function() {
+            info.setContent(div);
+            info.open(map, marker);
+        });
+
+
+
+        var marker_path;
+        var start = new Date();
+        var final = start;
+        var avg = 0, counter = 0;
+        var watchid = navigator.geolocation.watchPosition(function (pos) {
+            if (((new Date()) - start) > 60000) {
+                navigator.geolocation.clearWatch(watchid);
+            } else {
+                counter++;
+                var delta = (new Date()) - final;
+                avg += delta / 1000;
+                console.log(delta);
+                console.log(avg);
+
+                /*div.innerHTML += '<br/>' + pos.coords.latitude + ', ' + pos.coords.longitude + ', time: ' +
+                 (delta / 1000) + ', ' + (avg / counter);*/
+                final = new Date();
+
+                markers.push(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+                if (typeof marker_path !== 'undefined') marker_path.setMap(null);
+                else {
+
+                    marker_path = new google.maps.Polyline({
+                        path: markers,
+                        geodesic: true,
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    });
+                    console.log(markers);
+                    marker_path.setMap(map);
+                }
+            }
+        });
+    });
+
+
+</script>
+</body>
+</html>
