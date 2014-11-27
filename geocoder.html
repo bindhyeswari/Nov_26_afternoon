@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+        /*for (var prop in navigator) {
+         console.log(prop, navigator[prop]);
+         }*/
+
+
+
+
+        var geocoder = new google.maps.Geocoder();
+
+
+
+        for (var prop in navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                var coords = pos.coords;
+                var latlng = new google.maps.LatLng(coords.latitude, coords.longitude);
+                geocoder.geocode({latLng: latlng}, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        console.log(results);
+
+                        var hashmap = getAddress(results[0]['address_components']);
+                        printToForm(document.forms.address, hashmap);
+
+                    }
+                });
+            });
+        }
+
+        // loop over all the input elements of the form and
+        // set their values to the respective keys of the hashmap
+        function printToForm(form, hashmap) {
+            for (var i = 0, len = form.length; i < len; i++) {
+                var name = form[i].name;
+                form[i].value = hashmap[name];
+            }
+        }
+
+        // create a hashmap object with the keys set to the types of the components
+        function getAddress(address_components) {
+            var hashmap = {};
+            for (var i = 0, len = address_components.length; i < len; i++) {
+                for (var j = 0, lenx = address_components[i].types.length; j < lenx; j++) {
+                    if (!(address_components[i].types[j] in hashmap)) {
+                        hashmap[address_components[i].types[j]] = address_components[i]['long_name'];
+                    }
+                }
+            }
+            console.log(hashmap);
+            return hashmap;
+        }
+
+
+
+    </script>
+</head>
+<body>
+<form name="address">
+    <input type="text" name="street_number"/>
+    <input type="text" name="route"/>
+    <input type="text" name="locality"/>
+    <input type="text" name="administrative_area_level_1"/>
+    <input type="text" name="postal_code"/>
+</form>
+</body>
+</html>

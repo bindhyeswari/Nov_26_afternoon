@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+    <script>
+        /*for (var prop in navigator) {
+            console.log(prop, navigator[prop]);
+        }*/
+
+        var geocoder = new google.maps.Geocoder();
+
+
+        for (var prop in navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                printObjectProperties(pos);
+            });
+        }
+
+        // todo: How does it know your location?
+
+        function printObjectProperties(obj) { // recursive function to print the data out
+            for (var prop in obj) {
+                if (typeof obj[prop] === 'object')
+                    printObjectProperties(obj[prop]);
+                else
+                    console.log(prop, obj[prop]);
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
